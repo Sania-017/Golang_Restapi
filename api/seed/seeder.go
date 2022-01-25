@@ -30,14 +30,27 @@ var posts = []models.Post{
 		Content: "Hello world 2",
 	},
 }
+var address = []models.Address{
+	models.Address{
+
+		Address: "hostel city line 10",
+		Phone:   "456712345",
+	},
+	models.Address{
+
+		Address: "hostel city line 14",
+		Phone:   "556789012",
+	},
+}
 
 func Load(db *gorm.DB) {
 
-	err := db.Debug().DropTableIfExists(&models.Post{}, &models.User{}).Error
+	err := db.Debug().DropTableIfExists(&models.Post{}, &models.User{}, &models.Address{}).Error
 	if err != nil {
 		log.Fatalf("cannot drop table: %v", err)
 	}
-	err = db.Debug().AutoMigrate(&models.User{}, &models.Post{}).Error
+
+	err = db.Debug().AutoMigrate(&models.User{}, &models.Post{}, &models.Address{}).Error
 	if err != nil {
 		log.Fatalf("cannot migrate table: %v", err)
 	}
@@ -59,6 +72,11 @@ func Load(db *gorm.DB) {
 		err = db.Debug().Model(&models.Post{}).Create(&posts[i]).Error
 		if err != nil {
 			log.Fatalf("cannot seed posts table: %v", err)
+		}
+		address[i].AuthorID = users[i].ID
+		err = db.Debug().Model(&models.Address{}).Create(&address[i]).Error
+		if err != nil {
+			log.Fatalf("cannot seed address table: %v", err)
 		}
 	}
 }

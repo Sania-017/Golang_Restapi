@@ -10,16 +10,17 @@ import (
 	"strings"
 	"time"
 
-	jwt "github.com/dgrijalva/jwt-go"
+	jwt "github.com/dgrijalva/jwt-go" //securely transmitting information between parties as a JSON object.
 )
 
 func CreateToken(user_id uint32) (string, error) {
-	claims := jwt.MapClaims{}
+	claims := jwt.MapClaims{} //interface conversion
+	//set some claims
 	claims["authorized"] = true
 	claims["user_id"] = user_id
-	claims["exp"] = time.Now().Add(time.Hour * 1).Unix() //Token expires after 1 hour
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString([]byte(os.Getenv("API_SECRET")))
+	claims["exp"] = time.Now().Add(time.Hour * 1).Unix()       //Token expires after 1 hour
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims) //create the token
+	return token.SignedString([]byte(os.Getenv("API_SECRET"))) ////Sign and get the complete encoded token as string
 
 }
 

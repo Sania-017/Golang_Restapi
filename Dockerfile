@@ -12,7 +12,7 @@ RUN apk update && apk add --no-cache git
 
 # Set the current working directory inside the container 
 WORKDIR /app
-
+RUN pwd
 # Copy go mod and sum files 
 COPY go.mod go.sum ./
 
@@ -24,6 +24,7 @@ RUN go mod download
 # Copy the source from the current directory to the working Directory inside the container 
 
 COPY . .
+RUN ls
 # Build the Go app
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
 

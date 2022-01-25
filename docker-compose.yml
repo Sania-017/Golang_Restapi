@@ -2,53 +2,56 @@ version: '3'
 services:
   app:
     container_name: full_app
-    build: .
+    build: .  #docker file
     ports: 
-      - 8080:8080 # Forward the exposed port 8080 on the container to port 8080 on the host machine
+      - 8080:8080 
     restart: on-failure
     volumes:
-      - api:/usr/src/app/
+      - ./ :/app/     #./ exiting directory(host machine) and /usr/src/ container path
     depends_on:
-      - postgres # This service depends on postgres. Start that first.
-      # - mysql # This service depends on mysql. Start that first.
+      - fullstack-mysql          
     networks:
       - fullstack
 
-  postgres:
-    image: postgres:latest
-    container_name: full_db
-    environment:
-      - POSTGRES_USER=${DB_USER}  
-      - POSTGRES_PASSWORD=${DB_PASSWORD}
-      - POSTGRES_DB=${DB_NAME}
-      - DATABASE_HOST=${DB_HOST} 
-    ports:
-      - '5432:5432'
+
+  fullstack-mysql:
+    image: mysql:5.7
+    container_name: full_db_mysql
+    ports: 
+      - 3306:3306
+    environment: 
+      - MYSQL_ROOT_HOST=${DB_HOST} 
+      - MYSQL_USER=${DB_USER}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+      - MYSQL_DATABASE=${DB_NAME}
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
     volumes:
-      - database_postgres:/var/lib/postgresql/data
+      - database_mysql:/var/lib/mysql
+    networks:
+      - fullstack
+  
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin_container
+    depends_on:
+      - fullstack-mysql
+    environment:
+      - PMA_HOST=fullstack-mysql # Note the "fullstack-mysql". Must be the name of the what you used as the mysql service.
+      - PMA_USER=${DB_USER}
+      - PMA_PORT=${DB_PORT}
+      - PMA_PASSWORD=${DB_PASSWORD}
+    ports:
+      - 9090:80
+    restart: always
     networks:
       - fullstack
 
-  # mysql:
-  #   image: mysql:5.7
-  #   ports: 
-  #     - 3306:3306
-  #   environment: 
-  #     - MYSQL_DATABASE=${DB_NAME}
-  #     - MYSQL_USER=${DB_USER}
-  #     - MYSQL_PASSWORD=${DB_PASSWORD}
-  #     - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
-  #     - DATABASE_HOST=${DB_HOST} 
-  #   volumes:
-  #     - database_mysql:/var/lib/postgresql/data
-  #   networks:
-  #     - fullstack
 
 volumes:
   api:
-  database_postgres:
+  database_mysql:                  
 
 # Networks to be created to facilitate communication between containers
 networks:
   fullstack:
-
+    driver: bridge

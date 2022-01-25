@@ -21,5 +21,11 @@ func FormatError(err string) error {
 	if strings.Contains(err, "hashedPassword") {
 		return errors.New("Incorrect Password")
 	}
+	if strings.Contains(err, "address") {
+		return errors.New("Address Already Taken")
+	}
+	if strings.Contains(err, "phone") {
+		return errors.New("Phone number Already Taken")
+	}
 	return errors.New("Incorrect Details")
 }

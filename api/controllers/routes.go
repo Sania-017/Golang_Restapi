@@ -23,4 +23,11 @@ func (s *Server) initializeRoutes() {
 	s.Router.HandleFunc("/posts/{id}", middlewares.SetMiddlewareJSON(s.GetPost)).Methods("GET")
 	s.Router.HandleFunc("/posts/{id}", middlewares.SetMiddlewareJSON(middlewares.SetMiddlewareAuthentication(s.UpdatePost))).Methods("PUT")
 	s.Router.HandleFunc("/posts/{id}", middlewares.SetMiddlewareAuthentication(s.DeletePost)).Methods("DELETE")
+	//address routes
+	s.Router.HandleFunc("/address", middlewares.SetMiddlewareJSON(s.CreateAddress)).Methods("POST")
+
+	s.Router.HandleFunc("/address", middlewares.SetMiddlewareJSON(s.GetAddress)).Methods("GET")
+	s.Router.HandleFunc("/address/{id}", middlewares.SetMiddlewareJSON(s.GetAddressBYid)).Methods("GET")
+	s.Router.HandleFunc("/address/{id}", middlewares.SetMiddlewareJSON(middlewares.SetMiddlewareAuthentication(s.UpdateAddress))).Methods("PUT")
+	s.Router.HandleFunc("/address/{id}", middlewares.SetMiddlewareAuthentication(s.DeleteAddress)).Methods("DELETE")
 }
