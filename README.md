@@ -11,4 +11,5 @@ The dockerized API can be found here:
 https://github.com/victorsteven/Dockerized-Golang-Postgres-Mysql-API
 
 ### Dockerizing the Golang API
-
+### Dockerizing the API
+### Testing
